@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { mockMessages, mockUsers } from '../../data/mockData';
+import { mockMessages, mockUsers, updateMessageReadStatus } from '../../data/mockData';
 import { 
   MessageSquare, 
   Send, 
@@ -20,6 +20,14 @@ export function MessagesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [messages, setMessages] = useState(mockMessages);
   const [typingIndicator, setTypingIndicator] = useState<string | null>(null);
+  const [refreshCounter, setRefreshCounter] = useState(0);
+
+  // Función para forzar re-render de componentes padre
+  const forceUpdate = () => {
+    setRefreshCounter(prev => prev + 1);
+    // Disparar evento personalizado para notificar cambios
+    window.dispatchEvent(new CustomEvent('messagesUpdated'));
+  };
 
   // Simular mensajes en tiempo real
   useEffect(() => {
@@ -34,7 +42,13 @@ export function MessagesPage() {
           timestamp: new Date(),
           read: false
         };
-        setMessages(prev => [...prev, newMsg]);
+        setMessages(prev => {
+          const updated = [...prev, newMsg];
+          // Actualizar también el array global
+          mockMessages.push(newMsg);
+          forceUpdate();
+          return updated;
+        });
       }
     }, 5000);
 
@@ -94,13 +108,28 @@ export function MessagesPage() {
   // Marcar mensajes como leídos cuando se selecciona una conversación
   useEffect(() => {
     if (selectedContact) {
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.fromId === selectedContact && msg.toId === user?.id && !msg.read
-            ? { ...msg, read: true }
-            : msg
-        )
+      const messagesToMarkAsRead = messages.filter(msg => 
+        msg.fromId === selectedContact && msg.toId === user?.id && !msg.read
       );
+
+      if (messagesToMarkAsRead.length > 0) {
+        // Actualizar estado local
+        setMessages(prev => 
+          prev.map(msg => 
+            msg.fromId === selectedContact && msg.toId === user?.id && !msg.read
+              ? { ...msg, read: true }
+              : msg
+          )
+        );
+
+        // Actualizar array global
+        messagesToMarkAsRead.forEach(msg => {
+          updateMessageReadStatus(msg.id, true);
+        });
+
+        // Forzar actualización de contadores
+        forceUpdate();
+      }
     }
   }, [selectedContact, user?.id]);
 
@@ -116,7 +145,12 @@ export function MessagesPage() {
       read: false
     };
 
-    setMessages(prev => [...prev, messageData]);
+    setMessages(prev => {
+      const updated = [...prev, messageData];
+      // Actualizar también el array global
+      mockMessages.push(messageData);
+      return updated;
+    });
     setNewMessage('');
 
     // Simular indicador de escritura
@@ -143,7 +177,13 @@ export function MessagesPage() {
         };
         
         setTimeout(() => {
-          setMessages(prev => [...prev, autoResponse]);
+          setMessages(prev => {
+            const updated = [...prev, autoResponse];
+            // Actualizar también el array global
+            mockMessages.push(autoResponse);
+            forceUpdate();
+            return updated;
+          });
         }, 2000);
       }
     }, 1500);
@@ -151,14 +191,29 @@ export function MessagesPage() {
 
   const handleContactSelect = (contactId: string) => {
     setSelectedContact(contactId);
+    
     // Marcar mensajes como leídos inmediatamente
-    setMessages(prev => 
-      prev.map(msg => 
-        msg.fromId === contactId && msg.toId === user?.id && !msg.read
-          ? { ...msg, read: true }
-          : msg
-      )
+    const messagesToMarkAsRead = messages.filter(msg => 
+      msg.fromId === contactId && msg.toId === user?.id && !msg.read
     );
+
+    if (messagesToMarkAsRead.length > 0) {
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.fromId === contactId && msg.toId === user?.id && !msg.read
+            ? { ...msg, read: true }
+            : msg
+        )
+      );
+
+      // Actualizar array global
+      messagesToMarkAsRead.forEach(msg => {
+        updateMessageReadStatus(msg.id, true);
+      });
+
+      // Forzar actualización de contadores
+      forceUpdate();
+    }
   };
 
   const getMessageStatus = (message: any) => {

@@ -348,6 +348,9 @@ export const updateMessageReadStatus = (messageId: string, read: boolean) => {
   const messageIndex = mockMessages.findIndex(msg => msg.id === messageId);
   if (messageIndex !== -1) {
     mockMessages[messageIndex] = { ...mockMessages[messageIndex], read };
+    
+    // Disparar evento para notificar cambios
+    window.dispatchEvent(new CustomEvent('messagesUpdated'));
   }
 };
 
@@ -358,5 +361,28 @@ export const addNewMessage = (message: Omit<Message, 'id'>) => {
     id: Date.now().toString()
   };
   mockMessages.push(newMessage);
+  
+  // Disparar evento para notificar cambios
+  window.dispatchEvent(new CustomEvent('messagesUpdated'));
+  
   return newMessage;
+};
+
+// Función para marcar todos los mensajes de un contacto como leídos
+export const markContactMessagesAsRead = (contactId: string, userId: string) => {
+  let hasChanges = false;
+  
+  mockMessages.forEach((msg, index) => {
+    if (msg.fromId === contactId && msg.toId === userId && !msg.read) {
+      mockMessages[index] = { ...msg, read: true };
+      hasChanges = true;
+    }
+  });
+  
+  if (hasChanges) {
+    // Disparar evento para notificar cambios
+    window.dispatchEvent(new CustomEvent('messagesUpdated'));
+  }
+  
+  return hasChanges;
 };

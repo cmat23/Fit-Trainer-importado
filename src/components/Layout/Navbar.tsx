@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import { useNavigate } from 'react-router-dom';
@@ -11,12 +11,39 @@ export function Navbar() {
   const { unreadCount } = useNotifications();
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [messageCount, setMessageCount] = useState(0);
   const notificationButtonRef = useRef<HTMLButtonElement>(null);
 
   // Calcular mensajes no leídos en tiempo real
-  const unreadMessagesCount = mockMessages.filter(msg => 
-    msg.toId === user?.id && !msg.read
-  ).length;
+  const calculateUnreadMessages = () => {
+    const unreadMessagesCount = mockMessages.filter(msg => 
+      msg.toId === user?.id && !msg.read
+    ).length;
+    setMessageCount(unreadMessagesCount);
+  };
+
+  // Calcular al montar y cuando cambie el usuario
+  useEffect(() => {
+    calculateUnreadMessages();
+  }, [user?.id]);
+
+  // Escuchar cambios en los mensajes
+  useEffect(() => {
+    const handleMessagesUpdate = () => {
+      calculateUnreadMessages();
+    };
+
+    // Escuchar evento personalizado de actualización de mensajes
+    window.addEventListener('messagesUpdated', handleMessagesUpdate);
+    
+    // También verificar periódicamente para cambios
+    const interval = setInterval(calculateUnreadMessages, 1000);
+
+    return () => {
+      window.removeEventListener('messagesUpdated', handleMessagesUpdate);
+      clearInterval(interval);
+    };
+  }, [user?.id]);
 
   const handleMessagesClick = () => {
     navigate('/messages');
@@ -70,10 +97,10 @@ export function Navbar() {
               title="Mensajes"
             >
               <MessageCircle className="w-5 h-5" />
-              {unreadMessagesCount > 0 && (
+              {messageCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
                   <span className="text-xs text-white font-bold">
-                    {unreadMessagesCount > 9 ? '9+' : unreadMessagesCount}
+                    {messageCount > 9 ? '9+' : messageCount}
                   </span>
                 </span>
               )}
