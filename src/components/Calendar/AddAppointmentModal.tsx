@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Calendar, Clock, MapPin, User } from 'lucide-react';
+import { X, Calendar, Clock, MapPin, User, Search } from 'lucide-react';
 import { mockClients } from '../../data/mockData';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -22,7 +22,17 @@ export function AddAppointmentModal({ isOpen, onClose, onSave, selectedDate }: A
     notes: ''
   });
 
+  const [clientSearch, setClientSearch] = useState('');
+  const [showClientDropdown, setShowClientDropdown] = useState(false);
+  const [selectedClientName, setSelectedClientName] = useState('');
+
   const trainerClients = mockClients.filter(client => client.trainerId === user?.id);
+
+  // Filtrar clientes basado en la búsqueda
+  const filteredClients = trainerClients.filter(client =>
+    client.name.toLowerCase().includes(clientSearch.toLowerCase()) ||
+    client.email.toLowerCase().includes(clientSearch.toLowerCase())
+  );
 
   if (!isOpen) return null;
 
@@ -45,6 +55,27 @@ export function AddAppointmentModal({ isOpen, onClose, onSave, selectedDate }: A
       type: 'personal',
       notes: ''
     });
+    setClientSearch('');
+    setSelectedClientName('');
+  };
+
+  const handleClientSelect = (client: any) => {
+    setFormData(prev => ({ ...prev, clientId: client.id }));
+    setSelectedClientName(client.name);
+    setClientSearch(client.name);
+    setShowClientDropdown(false);
+  };
+
+  const handleClientSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setClientSearch(value);
+    setShowClientDropdown(true);
+    
+    // Si se borra el texto, limpiar la selección
+    if (!value) {
+      setFormData(prev => ({ ...prev, clientId: '' }));
+      setSelectedClientName('');
+    }
   };
 
   const generateTimeOptions = () => {
@@ -75,22 +106,70 @@ export function AddAppointmentModal({ isOpen, onClose, onSave, selectedDate }: A
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <User className="w-4 h-4 inline mr-2" />
                 Cliente *
               </label>
-              <select
-                required
-                value={formData.clientId}
-                onChange={(e) => setFormData(prev => ({ ...prev, clientId: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Seleccionar cliente</option>
-                {trainerClients.map(client => (
-                  <option key={client.id} value={client.id}>{client.name}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={clientSearch}
+                  onChange={handleClientSearchChange}
+                  onFocus={() => setShowClientDropdown(true)}
+                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Buscar cliente por nombre o email..."
+                />
+              </div>
+              
+              {/* Dropdown de resultados */}
+              {showClientDropdown && clientSearch && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                  {filteredClients.length > 0 ? (
+                    filteredClients.map(client => (
+                      <button
+                        key={client.id}
+                        type="button"
+                        onClick={() => handleClientSelect(client)}
+                        className="w-full px-4 py-3 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none border-b border-gray-100 last:border-b-0"
+                      >
+                        <div className="flex items-center space-x-3">
+                          {client.avatar ? (
+                            <img 
+                              src={client.avatar} 
+                              alt={client.name}
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                              <User className="w-4 h-4 text-gray-600" />
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">{client.name}</p>
+                            <p className="text-xs text-gray-500">{client.email}</p>
+                          </div>
+                        </div>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                      No se encontraron clientes
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* Mensaje de validación */}
+              {clientSearch && !formData.clientId && (
+                <p className="mt-1 text-xs text-red-600">
+                  Selecciona un cliente de la lista
+                </p>
+              )}
             </div>
 
             <div>
