@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Mail, Lock, Eye, EyeOff, Dumbbell, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Dumbbell, AlertCircle, CheckCircle } from 'lucide-react';
 import { GoogleSignInButton } from './GoogleSignInButton';
 import { RoleSelectionModal } from './RoleSelectionModal';
 
@@ -11,8 +11,13 @@ export function LoginForm() {
   const [error, setError] = useState('');
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [googleUserInfo, setGoogleUserInfo] = useState<any>(null);
-  const [showGoogleSetupInfo, setShowGoogleSetupInfo] = useState(false);
   const { login, loginWithGoogle, isLoading } = useAuth();
+
+  // Check if Google OAuth is properly configured
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const isGoogleConfigured = clientId && 
+    clientId !== '1234567890-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com' &&
+    clientId.includes('.apps.googleusercontent.com');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +45,7 @@ export function LoginForm() {
 
   const handleGoogleError = (error: any) => {
     console.error('Google sign-in error:', error);
-    setError('Error al iniciar sesión con Google. Intenta nuevamente.');
+    setError('Error al iniciar sesión con Google. Verifica la configuración OAuth.');
   };
 
   const handleRoleSelection = async (role: 'trainer' | 'client', additionalInfo?: any) => {
@@ -86,36 +91,20 @@ export function LoginForm() {
               text="signin_with"
             />
             
-            {/* Info about Google OAuth setup */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <div className="flex items-start space-x-2">
-                <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                <div className="text-sm">
-                  <p className="text-blue-800 font-medium">Configuración de Google OAuth</p>
-                  <p className="text-blue-700 mt-1">
-                    Para usar Google Sign-In en producción, necesitas configurar las credenciales OAuth en Google Cloud Console.
-                  </p>
-                  <button
-                    onClick={() => setShowGoogleSetupInfo(!showGoogleSetupInfo)}
-                    className="text-blue-600 hover:text-blue-800 underline mt-1"
-                  >
-                    {showGoogleSetupInfo ? 'Ocultar' : 'Ver'} instrucciones
-                  </button>
-                </div>
-              </div>
-              
-              {showGoogleSetupInfo && (
-                <div className="mt-3 text-sm text-blue-700 space-y-2">
-                  <p className="font-medium">Pasos para configurar:</p>
-                  <ol className="list-decimal list-inside space-y-1 ml-2">
-                    <li>Ve a <a href="https://console.developers.google.com/" target="_blank" rel="noopener noreferrer" className="underline">Google Cloud Console</a></li>
-                    <li>Crea un proyecto o selecciona uno existente</li>
-                    <li>Habilita la API de Google Identity</li>
-                    <li>Crea credenciales OAuth 2.0 Client ID</li>
-                    <li>Agrega tu dominio a los orígenes autorizados</li>
-                    <li>Copia el Client ID al archivo .env</li>
-                  </ol>
-                </div>
+            {/* Status indicator */}
+            <div className={`flex items-center space-x-2 text-sm ${
+              isGoogleConfigured ? 'text-green-600' : 'text-amber-600'
+            }`}>
+              {isGoogleConfigured ? (
+                <>
+                  <CheckCircle className="w-4 h-4" />
+                  <span>Google OAuth configurado correctamente</span>
+                </>
+              ) : (
+                <>
+                  <AlertCircle className="w-4 h-4" />
+                  <span>Google OAuth no configurado (opcional)</span>
+                </>
               )}
             </div>
             
