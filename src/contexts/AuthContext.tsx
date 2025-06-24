@@ -5,6 +5,7 @@ import { mockUsers } from '../data/mockData';
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
+  loginWithGoogle: (googleUser: any, role?: 'trainer' | 'client', additionalInfo?: any) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -55,14 +56,81 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return false;
   };
 
+  const loginWithGoogle = async (
+    googleUser: any, 
+    role?: 'trainer' | 'client', 
+    additionalInfo?: any
+  ): Promise<boolean> => {
+    setIsLoading(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Check if user already exists
+      let existingUser = mockUsers.find(u => u.email === googleUser.email);
+      
+      if (existingUser) {
+        // User exists, log them in
+        setUser(existingUser);
+        localStorage.setItem('fittrainer_user', JSON.stringify(existingUser));
+        setIsLoading(false);
+        return true;
+      } else if (role) {
+        // New user with role selection
+        const newUser: User = {
+          id: `google_${googleUser.id}`,
+          email: googleUser.email,
+          name: googleUser.name,
+          role: role,
+          avatar: googleUser.picture,
+          createdAt: new Date(),
+          ...(role === 'client' && additionalInfo && {
+            age: additionalInfo.age,
+            height: additionalInfo.height,
+            currentWeight: additionalInfo.weight,
+            goals: additionalInfo.goals || []
+          }),
+          ...(role === 'trainer' && additionalInfo && {
+            experience: additionalInfo.experience,
+            specialization: additionalInfo.specialization,
+            certification: additionalInfo.certification
+          })
+        };
+
+        // In a real app, you would save this to your backend
+        mockUsers.push(newUser);
+        
+        setUser(newUser);
+        localStorage.setItem('fittrainer_user', JSON.stringify(newUser));
+        setIsLoading(false);
+        return true;
+      } else {
+        // New user, needs role selection
+        setIsLoading(false);
+        return false;
+      }
+    } catch (error) {
+      console.error('Google login error:', error);
+      setIsLoading(false);
+      return false;
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('fittrainer_user');
+    
+    // Sign out from Google
+    if (window.google) {
+      window.google.accounts.id.disableAutoSelect();
+    }
   };
 
   const value = {
     user,
     login,
+    loginWithGoogle,
     logout,
     isLoading
   };
