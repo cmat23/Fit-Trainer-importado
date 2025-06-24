@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { X, Star, Zap, MessageSquare } from 'lucide-react';
+import { useNotificationActions } from '../../hooks/useNotificationActions';
+import { useAuth } from '../../contexts/AuthContext';
+import { mockClients, mockUsers } from '../../data/mockData';
 
 interface CompleteWorkoutModalProps {
   isOpen: boolean;
   onClose: () => void;
   onComplete: (completionData: any) => void;
   workoutName: string;
+  clientId?: string;
 }
 
-export function CompleteWorkoutModal({ isOpen, onClose, onComplete, workoutName }: CompleteWorkoutModalProps) {
+export function CompleteWorkoutModal({ isOpen, onClose, onComplete, workoutName, clientId }: CompleteWorkoutModalProps) {
   const [formData, setFormData] = useState({
     feeling: 0,
     energy: 0,
@@ -16,14 +20,29 @@ export function CompleteWorkoutModal({ isOpen, onClose, onComplete, workoutName 
     duration: ''
   });
 
+  const { notifyWorkoutCompleted } = useNotificationActions();
+  const { user } = useAuth();
+
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onComplete({
+    
+    const completionData = {
       ...formData,
       duration: formData.duration ? parseInt(formData.duration) : undefined
-    });
+    };
+    
+    onComplete(completionData);
+
+    // Enviar notificación al entrenador si es un cliente quien completa
+    if (user?.role === 'client' && user.trainerId && clientId) {
+      const client = mockClients.find(c => c.id === clientId);
+      if (client) {
+        notifyWorkoutCompleted(client.name, workoutName, clientId);
+      }
+    }
+
     onClose();
     setFormData({
       feeling: 0,

@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { X, Weight, Activity, TrendingUp, Ruler } from 'lucide-react';
+import { useNotificationActions } from '../../hooks/useNotificationActions';
+import { useAuth } from '../../contexts/AuthContext';
+import { mockClients } from '../../data/mockData';
 
 interface AddProgressModalProps {
   isOpen: boolean;
@@ -23,6 +26,9 @@ export function AddProgressModal({ isOpen, onClose, onSave }: AddProgressModalPr
     notes: ''
   });
 
+  const { notifyProgressUpdate } = useNotificationActions();
+  const { user } = useAuth();
+
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -43,6 +49,15 @@ export function AddProgressModal({ isOpen, onClose, onSave }: AddProgressModalPr
     };
     
     onSave(progressData);
+
+    // Notificar al entrenador si es un cliente quien registra progreso
+    if (user?.role === 'client' && user.trainerId) {
+      const client = mockClients.find(c => c.id === user.id);
+      if (client) {
+        notifyProgressUpdate(client.name, user.id);
+      }
+    }
+    
     onClose();
     setFormData({
       date: new Date().toISOString().split('T')[0],

@@ -120,3 +120,16 @@ export interface Appointment {
   status: 'scheduled' | 'completed' | 'cancelled';
   notes?: string;
 }
+
+export interface Notification {
+  id: string;
+  userId: string;
+  type: 'message' | 'appointment' | 'workout' | 'progress' | 'system';
+  title: string;
+  message: string;
+  timestamp: Date;
+  read: boolean;
+  actionUrl?: string;
+  priority: 'low' | 'medium' | 'high';
+  relatedId?: string;
+}

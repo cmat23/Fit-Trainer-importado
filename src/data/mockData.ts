@@ -1,4 +1,4 @@
-import { User, Client, ProgressEntry, Exercise, Workout, DietPlan, Message, Appointment } from '../types';
+import { User, Client, ProgressEntry, Exercise, Workout, DietPlan, Message, Appointment, Notification } from '../types';
 
 export const mockUsers: User[] = [
   {
@@ -232,5 +232,80 @@ export const mockAppointments: Appointment[] = [
     type: 'personal',
     status: 'scheduled',
     notes: 'Rutina de espalda y bíceps'
+  }
+];
+
+export const mockNotifications: Notification[] = [
+  {
+    id: '1',
+    userId: '1',
+    type: 'message',
+    title: 'Nuevo mensaje',
+    message: 'Ana García te ha enviado un mensaje',
+    timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutos atrás
+    read: false,
+    actionUrl: '/messages',
+    priority: 'medium',
+    relatedId: '2'
+  },
+  {
+    id: '2',
+    userId: '1',
+    type: 'workout',
+    title: 'Entrenamiento completado',
+    message: 'Miguel Rodríguez completó su rutina de pecho',
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
+    read: false,
+    actionUrl: '/clients/3',
+    priority: 'low',
+    relatedId: '3'
+  },
+  {
+    id: '3',
+    userId: '1',
+    type: 'appointment',
+    title: 'Cita próxima',
+    message: 'Tienes una cita con Ana García en 1 hora',
+    timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutos atrás
+    read: false,
+    actionUrl: '/calendar',
+    priority: 'high',
+    relatedId: '1'
+  },
+  {
+    id: '4',
+    userId: '2',
+    type: 'workout',
+    title: 'Nueva rutina asignada',
+    message: 'Carlos Mendoza te ha asignado una nueva rutina',
+    timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 horas atrás
+    read: true,
+    actionUrl: '/workouts',
+    priority: 'medium',
+    relatedId: '1'
+  },
+  {
+    id: '5',
+    userId: '2',
+    type: 'appointment',
+    title: 'Recordatorio de cita',
+    message: 'Tu sesión de entrenamiento es mañana a las 16:00',
+    timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 horas atrás
+    read: false,
+    actionUrl: '/calendar',
+    priority: 'medium',
+    relatedId: '1'
+  },
+  {
+    id: '6',
+    userId: '1',
+    type: 'progress',
+    title: 'Nuevo progreso registrado',
+    message: 'Ana García ha registrado nuevas mediciones',
+    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 día atrás
+    read: true,
+    actionUrl: '/clients/2',
+    priority: 'low',
+    relatedId: '2'
   }
 ];

@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 import { LoginForm } from './components/Auth/LoginForm';
 import { TrainerDashboard } from './components/Dashboard/TrainerDashboard';
 import { ClientDashboard } from './components/Dashboard/ClientDashboard';
@@ -20,36 +21,38 @@ function AppRoutes() {
   }
 
   return (
-    <Layout>
-      <Routes>
-        <Route path="/dashboard" element={
-          user.role === 'trainer' ? <TrainerDashboard /> : <ClientDashboard />
-        } />
-        
-        {/* Trainer Routes */}
-        {user.role === 'trainer' && (
-          <>
-            <Route path="/clients" element={<ClientsPage />} />
-            <Route path="/clients/:clientId" element={<ClientDetailPage />} />
-            <Route path="/calendar" element={<CalendarPage />} />
-          </>
-        )}
-        
-        {/* Client Routes */}
-        {user.role === 'client' && (
-          <>
-            <Route path="/progress" element={<ProgressPage />} />
-          </>
-        )}
-        
-        {/* Shared Routes */}
-        <Route path="/workouts" element={<WorkoutsPage />} />
-        <Route path="/messages" element={<MessagesPage />} />
-        
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-    </Layout>
+    <NotificationProvider>
+      <Layout>
+        <Routes>
+          <Route path="/dashboard" element={
+            user.role === 'trainer' ? <TrainerDashboard /> : <ClientDashboard />
+          } />
+          
+          {/* Trainer Routes */}
+          {user.role === 'trainer' && (
+            <>
+              <Route path="/clients" element={<ClientsPage />} />
+              <Route path="/clients/:clientId" element={<ClientDetailPage />} />
+              <Route path="/calendar" element={<CalendarPage />} />
+            </>
+          )}
+          
+          {/* Client Routes */}
+          {user.role === 'client' && (
+            <>
+              <Route path="/progress" element={<ProgressPage />} />
+            </>
+          )}
+          
+          {/* Shared Routes */}
+          <Route path="/workouts" element={<WorkoutsPage />} />
+          <Route path="/messages" element={<MessagesPage />} />
+          
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </Layout>
+    </NotificationProvider>
   );
 }
 
