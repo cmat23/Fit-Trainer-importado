@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Mail, Lock, Eye, EyeOff, Dumbbell } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Dumbbell, AlertCircle } from 'lucide-react';
 import { GoogleSignInButton } from './GoogleSignInButton';
 import { RoleSelectionModal } from './RoleSelectionModal';
 
@@ -9,33 +9,10 @@ export function LoginForm() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [googleUserInfo, setGoogleUserInfo] = useState<any>(null);
+  const [showGoogleSetupInfo, setShowGoogleSetupInfo] = useState(false);
   const { login, loginWithGoogle, isLoading } = useAuth();
-
-  useEffect(() => {
-    // Load Google Identity Services
-    const loadGoogleScript = () => {
-      if (window.google) {
-        setIsGoogleLoaded(true);
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.defer = true;
-      script.onload = () => setIsGoogleLoaded(true);
-      script.onerror = () => {
-        console.error('Failed to load Google Identity Services');
-        setIsGoogleLoaded(true); // Set to true to show fallback
-      };
-      document.head.appendChild(script);
-    };
-
-    loadGoogleScript();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,8 +84,40 @@ export function LoginForm() {
               onSuccess={handleGoogleSuccess}
               onError={handleGoogleError}
               text="signin_with"
-              disabled={!isGoogleLoaded}
             />
+            
+            {/* Info about Google OAuth setup */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <div className="flex items-start space-x-2">
+                <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div className="text-sm">
+                  <p className="text-blue-800 font-medium">Configuración de Google OAuth</p>
+                  <p className="text-blue-700 mt-1">
+                    Para usar Google Sign-In en producción, necesitas configurar las credenciales OAuth en Google Cloud Console.
+                  </p>
+                  <button
+                    onClick={() => setShowGoogleSetupInfo(!showGoogleSetupInfo)}
+                    className="text-blue-600 hover:text-blue-800 underline mt-1"
+                  >
+                    {showGoogleSetupInfo ? 'Ocultar' : 'Ver'} instrucciones
+                  </button>
+                </div>
+              </div>
+              
+              {showGoogleSetupInfo && (
+                <div className="mt-3 text-sm text-blue-700 space-y-2">
+                  <p className="font-medium">Pasos para configurar:</p>
+                  <ol className="list-decimal list-inside space-y-1 ml-2">
+                    <li>Ve a <a href="https://console.developers.google.com/" target="_blank" rel="noopener noreferrer" className="underline">Google Cloud Console</a></li>
+                    <li>Crea un proyecto o selecciona uno existente</li>
+                    <li>Habilita la API de Google Identity</li>
+                    <li>Crea credenciales OAuth 2.0 Client ID</li>
+                    <li>Agrega tu dominio a los orígenes autorizados</li>
+                    <li>Copia el Client ID al archivo .env</li>
+                  </ol>
+                </div>
+              )}
+            </div>
             
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
