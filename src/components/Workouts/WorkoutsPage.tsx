@@ -9,18 +9,26 @@ import {
   CheckCircle,
   Circle,
   User,
-  Activity
+  Activity,
+  Eye,
+  Edit,
+  Copy,
+  Trash2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { AddWorkoutModal } from './AddWorkoutModal';
 import { CompleteWorkoutModal } from './CompleteWorkoutModal';
+import { WorkoutDetailModal } from './WorkoutDetailModal';
+import { EditWorkoutModal } from './EditWorkoutModal';
 
 export function WorkoutsPage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'all' | 'completed' | 'pending'>('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState<any>(null);
 
   const userWorkouts = user?.role === 'trainer' 
@@ -59,6 +67,45 @@ export function WorkoutsPage() {
   const handleWorkoutCompletion = (completionData: any) => {
     console.log('Completing workout:', selectedWorkout.id, completionData);
     alert('Entrenamiento marcado como completado (funcionalidad de demostración)');
+  };
+
+  const handleViewDetails = (workout: any) => {
+    setSelectedWorkout(workout);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleEditWorkout = (workout: any) => {
+    setSelectedWorkout(workout);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = (workoutData: any) => {
+    console.log('Saving edited workout:', workoutData);
+    alert('Rutina actualizada exitosamente (funcionalidad de demostración)');
+  };
+
+  const handleDuplicateWorkout = (workout: any) => {
+    const duplicatedWorkout = {
+      ...workout,
+      id: Date.now().toString(),
+      name: `${workout.name} (Copia)`,
+      date: new Date(),
+      completed: false,
+      duration: undefined,
+      feeling: undefined,
+      energy: undefined,
+      notes: workout.notes
+    };
+    
+    console.log('Duplicating workout:', duplicatedWorkout);
+    alert('Rutina duplicada exitosamente (funcionalidad de demostración)');
+  };
+
+  const handleDeleteWorkout = (workout: any) => {
+    if (window.confirm(`¿Estás seguro de que quieres eliminar "${workout.name}"?`)) {
+      console.log('Deleting workout:', workout.id);
+      alert('Rutina eliminada exitosamente (funcionalidad de demostración)');
+    }
   };
 
   return (
@@ -168,7 +215,7 @@ export function WorkoutsPage() {
 
                     {/* Lista de ejercicios */}
                     <div className="space-y-2">
-                      {workout.exercises.map((exercise, index) => (
+                      {workout.exercises.slice(0, 3).map((exercise: any, index: number) => (
                         <div key={index} className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
                           <div>
                             <span className="text-sm font-medium text-gray-900">
@@ -181,6 +228,13 @@ export function WorkoutsPage() {
                           </div>
                         </div>
                       ))}
+                      {workout.exercises.length > 3 && (
+                        <div className="text-center py-2">
+                          <span className="text-sm text-gray-500">
+                            +{workout.exercises.length - 3} ejercicios más
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Notas y sensaciones */}
@@ -209,6 +263,7 @@ export function WorkoutsPage() {
 
                   {/* Acciones */}
                   <div className="flex flex-col space-y-2 ml-4">
+                    {/* Botón principal según estado y rol */}
                     {!workout.completed && user?.role === 'client' && (
                       <button 
                         onClick={() => handleCompleteWorkout(workout)}
@@ -217,9 +272,49 @@ export function WorkoutsPage() {
                         Marcar Completado
                       </button>
                     )}
-                    <button className="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                      Ver Detalles
-                    </button>
+                    
+                    {/* Botones de acción */}
+                    <div className="flex space-x-2">
+                      <button 
+                        onClick={() => handleViewDetails(workout)}
+                        className="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-1"
+                        title="Ver detalles"
+                      >
+                        <Eye className="w-3 h-3" />
+                        <span>Ver</span>
+                      </button>
+                      
+                      {user?.role === 'trainer' && (
+                        <>
+                          <button 
+                            onClick={() => handleEditWorkout(workout)}
+                            className="px-3 py-1 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors flex items-center space-x-1"
+                            title="Editar rutina"
+                          >
+                            <Edit className="w-3 h-3" />
+                            <span>Editar</span>
+                          </button>
+                          
+                          <button 
+                            onClick={() => handleDuplicateWorkout(workout)}
+                            className="px-3 py-1 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors flex items-center space-x-1"
+                            title="Duplicar rutina"
+                          >
+                            <Copy className="w-3 h-3" />
+                            <span>Duplicar</span>
+                          </button>
+                          
+                          <button 
+                            onClick={() => handleDeleteWorkout(workout)}
+                            className="px-3 py-1 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors flex items-center space-x-1"
+                            title="Eliminar rutina"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                            <span>Eliminar</span>
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -245,6 +340,7 @@ export function WorkoutsPage() {
         </div>
       </div>
 
+      {/* Modales */}
       <AddWorkoutModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
@@ -256,6 +352,21 @@ export function WorkoutsPage() {
         onClose={() => setIsCompleteModalOpen(false)}
         onComplete={handleWorkoutCompletion}
         workoutName={selectedWorkout?.name || ''}
+        clientId={selectedWorkout?.clientId}
+      />
+
+      <WorkoutDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        workout={selectedWorkout}
+        userRole={user?.role || 'client'}
+      />
+
+      <EditWorkoutModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSave={handleSaveEdit}
+        workout={selectedWorkout}
       />
     </div>
   );

@@ -12,7 +12,10 @@ import {
   Edit,
   Plus,
   Dumbbell,
-  FileText
+  FileText,
+  MessageSquare,
+  UserCheck,
+  Settings
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { format } from 'date-fns';
@@ -66,6 +69,24 @@ export function ClientDetailPage() {
     alert('Medición agregada exitosamente (funcionalidad de demostración)');
   };
 
+  const handleSendMessage = () => {
+    // Navegar a mensajes con el cliente seleccionado
+    alert('Redirigiendo a mensajes con el cliente (funcionalidad de demostración)');
+  };
+
+  const handleScheduleAppointment = () => {
+    // Navegar al calendario para programar cita
+    alert('Redirigiendo al calendario para programar cita (funcionalidad de demostración)');
+  };
+
+  const handleEditClient = () => {
+    alert('Abrir modal de edición de cliente (funcionalidad de demostración)');
+  };
+
+  const handleClientSettings = () => {
+    alert('Abrir configuración del cliente (funcionalidad de demostración)');
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -103,17 +124,51 @@ export function ClientDetailPage() {
             </div>
           </div>
         </div>
+        
+        {/* Botones de acción */}
         <div className="flex space-x-2">
           <button 
-            onClick={handleExportPDF}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            onClick={handleSendMessage}
+            className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors flex items-center space-x-2"
+            title="Enviar mensaje"
           >
-            <FileText className="w-4 h-4 mr-2 inline" />
-            Exportar PDF
+            <MessageSquare className="w-4 h-4" />
+            <span>Mensaje</span>
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            <Edit className="w-4 h-4 mr-2 inline" />
-            Editar
+          
+          <button 
+            onClick={handleScheduleAppointment}
+            className="px-4 py-2 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors flex items-center space-x-2"
+            title="Programar cita"
+          >
+            <Calendar className="w-4 h-4" />
+            <span>Cita</span>
+          </button>
+          
+          <button 
+            onClick={handleExportPDF}
+            className="px-4 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors flex items-center space-x-2"
+            title="Exportar PDF"
+          >
+            <FileText className="w-4 h-4" />
+            <span>PDF</span>
+          </button>
+          
+          <button 
+            onClick={handleEditClient}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors flex items-center space-x-2"
+            title="Editar cliente"
+          >
+            <Edit className="w-4 h-4" />
+            <span>Editar</span>
+          </button>
+          
+          <button 
+            onClick={handleClientSettings}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            title="Configuración"
+          >
+            <Settings className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -235,10 +290,10 @@ export function ClientDetailPage() {
                   <h3 className="text-lg font-semibold text-gray-900">Historial de Mediciones</h3>
                   <button 
                     onClick={() => setIsAddProgressModalOpen(true)}
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center space-x-2"
                   >
-                    <Plus className="w-4 h-4 mr-2 inline" />
-                    Nueva Medición
+                    <Plus className="w-4 h-4" />
+                    <span>Nueva Medición</span>
                   </button>
                 </div>
                 <div className="overflow-x-auto">
@@ -293,9 +348,12 @@ export function ClientDetailPage() {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900">Entrenamientos</h3>
-                <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
-                  <Plus className="w-4 h-4 mr-2 inline" />
-                  Nueva Rutina
+                <button 
+                  onClick={() => alert('Crear nueva rutina (funcionalidad de demostración)')}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center space-x-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Nueva Rutina</span>
                 </button>
               </div>
               
@@ -329,9 +387,12 @@ export function ClientDetailPage() {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900">Plan Nutricional</h3>
-                <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
-                  <Plus className="w-4 h-4 mr-2 inline" />
-                  Asignar Dieta
+                <button 
+                  onClick={() => alert('Asignar dieta (funcionalidad de demostración)')}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center space-x-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Asignar Dieta</span>
                 </button>
               </div>
               
