@@ -4,6 +4,7 @@ import { useNotifications } from '../../contexts/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, MessageCircle, Bell, User } from 'lucide-react';
 import { NotificationDropdown } from '../Notifications/NotificationDropdown';
+import { mockMessages } from '../../data/mockData';
 
 export function Navbar() {
   const { user, logout } = useAuth();
@@ -11,6 +12,11 @@ export function Navbar() {
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Calcular mensajes no leídos en tiempo real
+  const unreadMessagesCount = mockMessages.filter(msg => 
+    msg.toId === user?.id && !msg.read
+  ).length;
 
   const handleMessagesClick = () => {
     navigate('/messages');
@@ -64,10 +70,13 @@ export function Navbar() {
               title="Mensajes"
             >
               <MessageCircle className="w-5 h-5" />
-              {/* Badge de mensajes no leídos */}
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-xs text-white font-bold">2</span>
-              </span>
+              {unreadMessagesCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-xs text-white font-bold">
+                    {unreadMessagesCount > 9 ? '9+' : unreadMessagesCount}
+                  </span>
+                </span>
+              )}
             </button>
             
             <div className="flex items-center space-x-3">

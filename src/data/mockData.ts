@@ -181,7 +181,8 @@ export const mockWorkouts: Workout[] = [
   }
 ];
 
-export const mockMessages: Message[] = [
+// Estado reactivo de mensajes que se actualiza en tiempo real
+export let mockMessages: Message[] = [
   {
     id: '1',
     fromId: '1',
@@ -204,6 +205,38 @@ export const mockMessages: Message[] = [
     toId: '2',
     content: 'Perfecto, es normal al principio. Para la próxima sesión vamos a trabajar en tu técnica.',
     timestamp: new Date('2024-03-21T11:20:00'),
+    read: false
+  },
+  {
+    id: '4',
+    fromId: '3',
+    toId: '1',
+    content: 'Hola Carlos, tengo una duda sobre la rutina de hoy.',
+    timestamp: new Date('2024-03-21T14:30:00'),
+    read: false
+  },
+  {
+    id: '5',
+    fromId: '1',
+    toId: '3',
+    content: 'Claro Miguel, dime qué necesitas.',
+    timestamp: new Date('2024-03-21T14:35:00'),
+    read: true
+  },
+  {
+    id: '6',
+    fromId: '3',
+    toId: '1',
+    content: '¿Puedo aumentar el peso en el press de banca?',
+    timestamp: new Date('2024-03-21T14:40:00'),
+    read: false
+  },
+  {
+    id: '7',
+    fromId: '2',
+    toId: '1',
+    content: '¿A qué hora es nuestra sesión de mañana?',
+    timestamp: new Date(Date.now() - 10 * 60 * 1000), // 10 minutos atrás
     read: false
   }
 ];
@@ -309,3 +342,21 @@ export const mockNotifications: Notification[] = [
     relatedId: '2'
   }
 ];
+
+// Función para actualizar el estado de los mensajes
+export const updateMessageReadStatus = (messageId: string, read: boolean) => {
+  const messageIndex = mockMessages.findIndex(msg => msg.id === messageId);
+  if (messageIndex !== -1) {
+    mockMessages[messageIndex] = { ...mockMessages[messageIndex], read };
+  }
+};
+
+// Función para agregar nuevos mensajes
+export const addNewMessage = (message: Omit<Message, 'id'>) => {
+  const newMessage: Message = {
+    ...message,
+    id: Date.now().toString()
+  };
+  mockMessages.push(newMessage);
+  return newMessage;
+};
