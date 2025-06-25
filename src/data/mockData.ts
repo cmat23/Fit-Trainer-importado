@@ -181,6 +181,258 @@ export const mockWorkouts: Workout[] = [
   }
 ];
 
+// Nuevos datos mock para planes de dieta
+export const mockDietPlans: DietPlan[] = [
+  {
+    id: '1',
+    clientId: '2',
+    trainerId: '1',
+    name: 'Plan de Definición - Ana García',
+    startDate: new Date('2024-03-01'),
+    endDate: new Date('2024-05-31'),
+    targetCalories: 1800,
+    targetProtein: 120,
+    targetCarbs: 180,
+    targetFat: 60,
+    meals: {
+      breakfast: [
+        {
+          id: '1',
+          name: 'Avena con frutas',
+          calories: 350,
+          protein: 12,
+          carbs: 55,
+          fat: 8,
+          time: '08:00',
+          description: '60g avena + 1 plátano + 15g almendras + canela'
+        },
+        {
+          id: '2',
+          name: 'Café con leche desnatada',
+          calories: 80,
+          protein: 6,
+          carbs: 8,
+          fat: 1,
+          time: '08:30',
+          description: '200ml leche desnatada + café'
+        }
+      ],
+      lunch: [
+        {
+          id: '3',
+          name: 'Pechuga de pollo a la plancha',
+          calories: 250,
+          protein: 45,
+          carbs: 0,
+          fat: 6,
+          time: '13:30',
+          description: '150g pechuga de pollo con especias'
+        },
+        {
+          id: '4',
+          name: 'Arroz integral con verduras',
+          calories: 200,
+          protein: 5,
+          carbs: 40,
+          fat: 2,
+          time: '13:30',
+          description: '80g arroz integral + brócoli + zanahoria'
+        },
+        {
+          id: '5',
+          name: 'Ensalada mixta',
+          calories: 120,
+          protein: 3,
+          carbs: 8,
+          fat: 8,
+          time: '13:30',
+          description: 'Lechuga, tomate, pepino + 1 cdta aceite oliva'
+        }
+      ],
+      dinner: [
+        {
+          id: '6',
+          name: 'Salmón al horno',
+          calories: 280,
+          protein: 35,
+          carbs: 0,
+          fat: 15,
+          time: '20:00',
+          description: '120g salmón con limón y hierbas'
+        },
+        {
+          id: '7',
+          name: 'Verduras al vapor',
+          calories: 80,
+          protein: 3,
+          carbs: 15,
+          fat: 1,
+          time: '20:00',
+          description: 'Brócoli, calabacín y judías verdes'
+        }
+      ],
+      snacks: [
+        {
+          id: '8',
+          name: 'Yogur griego con nueces',
+          calories: 180,
+          protein: 15,
+          carbs: 12,
+          fat: 8,
+          time: '16:00',
+          description: '150g yogur griego 0% + 15g nueces'
+        },
+        {
+          id: '9',
+          name: 'Manzana',
+          calories: 80,
+          protein: 0,
+          carbs: 20,
+          fat: 0,
+          time: '11:00',
+          description: '1 manzana mediana'
+        }
+      ]
+    },
+    notes: 'Plan diseñado para pérdida de grasa manteniendo masa muscular. Beber 2-3L de agua al día. Tomar las comidas a las horas indicadas. Permitido 1 día libre a la semana.',
+    createdAt: new Date('2024-02-28')
+  },
+  {
+    id: '2',
+    clientId: '3',
+    trainerId: '1',
+    name: 'Plan de Volumen - Miguel Rodríguez',
+    startDate: new Date('2024-02-15'),
+    endDate: new Date('2024-06-15'),
+    targetCalories: 2800,
+    targetProtein: 180,
+    targetCarbs: 350,
+    targetFat: 90,
+    meals: {
+      breakfast: [
+        {
+          id: '10',
+          name: 'Tortilla de 3 huevos',
+          calories: 300,
+          protein: 24,
+          carbs: 2,
+          fat: 20,
+          time: '07:30',
+          description: '3 huevos enteros + 1 cdta aceite oliva'
+        },
+        {
+          id: '11',
+          name: 'Tostadas integrales con aguacate',
+          calories: 280,
+          protein: 8,
+          carbs: 35,
+          fat: 12,
+          time: '07:30',
+          description: '2 rebanadas pan integral + 1/2 aguacate'
+        },
+        {
+          id: '12',
+          name: 'Batido de proteína',
+          calories: 200,
+          protein: 25,
+          carbs: 15,
+          fat: 3,
+          time: '08:00',
+          description: '1 scoop proteína whey + 250ml leche'
+        }
+      ],
+      lunch: [
+        {
+          id: '13',
+          name: 'Ternera magra',
+          calories: 350,
+          protein: 50,
+          carbs: 0,
+          fat: 15,
+          time: '14:00',
+          description: '180g ternera magra a la plancha'
+        },
+        {
+          id: '14',
+          name: 'Pasta integral',
+          calories: 300,
+          protein: 12,
+          carbs: 60,
+          fat: 2,
+          time: '14:00',
+          description: '100g pasta integral con tomate natural'
+        },
+        {
+          id: '15',
+          name: 'Ensalada con aceite',
+          calories: 150,
+          protein: 2,
+          carbs: 8,
+          fat: 12,
+          time: '14:00',
+          description: 'Ensalada variada + 1 cda aceite oliva'
+        }
+      ],
+      dinner: [
+        {
+          id: '16',
+          name: 'Pechuga de pavo',
+          calories: 220,
+          protein: 40,
+          carbs: 0,
+          fat: 6,
+          time: '21:00',
+          description: '150g pechuga de pavo al horno'
+        },
+        {
+          id: '17',
+          name: 'Patata dulce asada',
+          calories: 180,
+          protein: 3,
+          carbs: 40,
+          fat: 1,
+          time: '21:00',
+          description: '200g patata dulce asada con especias'
+        }
+      ],
+      snacks: [
+        {
+          id: '18',
+          name: 'Frutos secos mixtos',
+          calories: 200,
+          protein: 6,
+          carbs: 8,
+          fat: 16,
+          time: '11:00',
+          description: '30g almendras, nueces y avellanas'
+        },
+        {
+          id: '19',
+          name: 'Plátano con mantequilla de cacahuete',
+          calories: 250,
+          protein: 8,
+          carbs: 30,
+          fat: 12,
+          time: '17:00',
+          description: '1 plátano + 1 cda mantequilla cacahuete'
+        },
+        {
+          id: '20',
+          name: 'Caseína antes de dormir',
+          calories: 150,
+          protein: 25,
+          carbs: 5,
+          fat: 2,
+          time: '23:00',
+          description: '1 scoop proteína caseína + agua'
+        }
+      ]
+    },
+    notes: 'Plan para ganancia de masa muscular. Importante mantener superávit calórico. Tomar suplementos según indicaciones. Hidratación constante durante el día.',
+    createdAt: new Date('2024-02-10')
+  }
+];
+
 // Estado reactivo de mensajes que se actualiza en tiempo real
 export let mockMessages: Message[] = [
   {

@@ -14,6 +14,7 @@ import { CalendarPage } from './components/Calendar/CalendarPage';
 import { SmartwatchSync } from './components/Fitness/SmartwatchSync';
 import { FitnessDataImport } from './components/Fitness/FitnessDataImport';
 import { MissionsPage } from './components/Missions/MissionsPage';
+import { DietPage } from './components/Diet/DietPage';
 import { Layout } from './components/Layout/Layout';
 
 function AppRoutes() {
@@ -54,6 +55,7 @@ function AppRoutes() {
           {/* Shared Routes */}
           <Route path="/workouts" element={<WorkoutsPage />} />
           <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/diet" element={<DietPage />} />
           
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
