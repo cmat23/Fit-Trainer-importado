@@ -13,6 +13,7 @@ import { MessagesPage } from './components/Messages/MessagesPage';
 import { CalendarPage } from './components/Calendar/CalendarPage';
 import { SmartwatchSync } from './components/Fitness/SmartwatchSync';
 import { FitnessDataImport } from './components/Fitness/FitnessDataImport';
+import { MissionsPage } from './components/Missions/MissionsPage';
 import { Layout } from './components/Layout/Layout';
 
 function AppRoutes() {
@@ -36,6 +37,7 @@ function AppRoutes() {
               <Route path="/clients" element={<ClientsPage />} />
               <Route path="/clients/:clientId" element={<ClientDetailPage />} />
               <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/missions" element={<MissionsPage />} />
             </>
           )}
           
@@ -45,6 +47,7 @@ function AppRoutes() {
               <Route path="/progress" element={<ProgressPage />} />
               <Route path="/fitness-sync" element={<SmartwatchSync />} />
               <Route path="/fitness-import" element={<FitnessDataImport />} />
+              <Route path="/missions" element={<MissionsPage />} />
             </>
           )}
           

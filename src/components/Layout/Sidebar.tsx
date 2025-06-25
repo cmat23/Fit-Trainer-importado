@@ -11,7 +11,8 @@ import {
   Dumbbell,
   User,
   BarChart3,
-  Smartphone
+  Smartphone,
+  Target
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
@@ -20,6 +21,7 @@ const trainerNavItems = [
   { to: '/clients', icon: Users, label: 'Clientes' },
   { to: '/calendar', icon: Calendar, label: 'Calendario' },
   { to: '/workouts', icon: Dumbbell, label: 'Rutinas' },
+  { to: '/missions', icon: Target, label: 'Misiones' },
   { to: '/diet', icon: Apple, label: 'Dietas' },
   { to: '/messages', icon: MessageSquare, label: 'Mensajes' },
   { to: '/reports', icon: FileText, label: 'Reportes' },
@@ -29,6 +31,7 @@ const clientNavItems = [
   { to: '/dashboard', icon: BarChart3, label: 'Dashboard' },
   { to: '/progress', icon: TrendingUp, label: 'Mi Progreso' },
   { to: '/workouts', icon: Dumbbell, label: 'Mis Rutinas' },
+  { to: '/missions', icon: Target, label: 'Misiones' },
   { to: '/fitness-sync', icon: Smartphone, label: 'Dispositivos' },
   { to: '/diet', icon: Apple, label: 'Mi Dieta' },
   { to: '/calendar', icon: Calendar, label: 'Calendario' },

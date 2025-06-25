@@ -1,4 +1,4 @@
-import { User, Client, ProgressEntry, Exercise, Workout, DietPlan, Message, Appointment, Notification, FitnessData, DeviceConnection, DailyActivity } from '../types';
+import { User, Client, ProgressEntry, Exercise, Workout, DietPlan, Message, Appointment, Notification, FitnessData, DeviceConnection, DailyActivity, Mission, ClientPoints, Achievement, PointsTransaction, Reward, RewardClaim, Leaderboard } from '../types';
 
 export const mockUsers: User[] = [
   {
@@ -431,6 +431,323 @@ export const mockDailyActivity: DailyActivity[] = [
     ],
     source: 'Apple Health',
     syncedAt: new Date()
+  }
+];
+
+// Nuevos datos mock para el sistema de incentivos
+export const mockMissions: Mission[] = [
+  {
+    id: '1',
+    trainerId: '1',
+    clientId: '2',
+    title: 'Camina 10,000 pasos diarios',
+    description: 'Mantén una actividad constante caminando al menos 10,000 pasos cada día durante una semana',
+    type: 'steps',
+    difficulty: 'easy',
+    points: 50,
+    target: {
+      value: 10000,
+      unit: 'pasos',
+      timeframe: 'daily'
+    },
+    status: 'active',
+    progress: 75,
+    startDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    endDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
+    category: 'fitness',
+    icon: '🚶‍♀️',
+    color: 'blue',
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+  },
+  {
+    id: '2',
+    trainerId: '1',
+    clientId: '2',
+    title: 'Completa 5 entrenamientos',
+    description: 'Completa 5 sesiones de entrenamiento en las próximas 2 semanas',
+    type: 'workout',
+    difficulty: 'medium',
+    points: 100,
+    target: {
+      value: 5,
+      unit: 'entrenamientos',
+      timeframe: 'total'
+    },
+    status: 'active',
+    progress: 60,
+    startDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+    endDate: new Date(Date.now() + 9 * 24 * 60 * 60 * 1000),
+    category: 'fitness',
+    icon: '💪',
+    color: 'green',
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
+  },
+  {
+    id: '3',
+    trainerId: '1',
+    clientId: '2',
+    title: 'Racha de 7 días',
+    description: 'Mantén una racha de actividad durante 7 días consecutivos',
+    type: 'consistency',
+    difficulty: 'hard',
+    points: 150,
+    target: {
+      value: 7,
+      unit: 'días',
+      timeframe: 'total'
+    },
+    status: 'completed',
+    progress: 100,
+    startDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+    endDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    completedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    category: 'challenge',
+    icon: '🔥',
+    color: 'orange',
+    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
+  },
+  {
+    id: '4',
+    trainerId: '1',
+    clientId: '3',
+    title: 'Quema 500 calorías',
+    description: 'Quema al menos 500 calorías en una sola sesión de entrenamiento',
+    type: 'calories',
+    difficulty: 'medium',
+    points: 75,
+    target: {
+      value: 500,
+      unit: 'calorías',
+      timeframe: 'daily'
+    },
+    status: 'active',
+    progress: 80,
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    category: 'fitness',
+    icon: '🔥',
+    color: 'red',
+    createdAt: new Date()
+  }
+];
+
+export const mockClientPoints: ClientPoints[] = [
+  {
+    id: '1',
+    clientId: '2',
+    totalPoints: 1250,
+    currentLevel: 8,
+    pointsToNextLevel: 150,
+    weeklyPoints: 275,
+    monthlyPoints: 850,
+    streak: {
+      current: 12,
+      longest: 18,
+      lastActivity: new Date()
+    },
+    achievements: [
+      {
+        id: 'first_mission',
+        name: 'Primera Misión',
+        description: 'Completa tu primera misión',
+        icon: '🎯',
+        color: 'blue',
+        points: 25,
+        unlockedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+        category: 'missions',
+        rarity: 'common'
+      },
+      {
+        id: 'week_warrior',
+        name: 'Guerrero Semanal',
+        description: 'Mantén una racha de 7 días',
+        icon: '⚔️',
+        color: 'gold',
+        points: 100,
+        unlockedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+        category: 'consistency',
+        rarity: 'rare'
+      }
+    ],
+    lastUpdated: new Date()
+  },
+  {
+    id: '2',
+    clientId: '3',
+    totalPoints: 890,
+    currentLevel: 6,
+    pointsToNextLevel: 110,
+    weeklyPoints: 180,
+    monthlyPoints: 620,
+    streak: {
+      current: 8,
+      longest: 15,
+      lastActivity: new Date(Date.now() - 2 * 60 * 60 * 1000)
+    },
+    achievements: [
+      {
+        id: 'first_mission',
+        name: 'Primera Misión',
+        description: 'Completa tu primera misión',
+        icon: '🎯',
+        color: 'blue',
+        points: 25,
+        unlockedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+        category: 'missions',
+        rarity: 'common'
+      }
+    ],
+    lastUpdated: new Date()
+  }
+];
+
+export const mockPointsTransactions: PointsTransaction[] = [
+  {
+    id: '1',
+    clientId: '2',
+    type: 'earned',
+    points: 150,
+    reason: 'Misión completada: Racha de 7 días',
+    relatedId: '3',
+    relatedType: 'mission',
+    timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    description: 'Completaste exitosamente la misión de mantener una racha de 7 días'
+  },
+  {
+    id: '2',
+    clientId: '2',
+    type: 'earned',
+    points: 50,
+    reason: 'Entrenamiento completado',
+    relatedId: '1',
+    relatedType: 'workout',
+    timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    description: 'Completaste tu rutina de fuerza'
+  },
+  {
+    id: '3',
+    clientId: '2',
+    type: 'bonus',
+    points: 25,
+    reason: 'Bonus por consistencia',
+    timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000),
+    description: 'Bonus por mantener tu racha activa'
+  }
+];
+
+export const mockRewards: Reward[] = [
+  {
+    id: '1',
+    trainerId: '1',
+    name: 'Sesión de Masaje Deportivo',
+    description: 'Una sesión de 60 minutos de masaje deportivo para recuperación muscular',
+    cost: 500,
+    type: 'experience',
+    category: 'training',
+    icon: '💆‍♀️',
+    color: 'purple',
+    isActive: true,
+    stock: 5,
+    createdAt: new Date('2024-01-01')
+  },
+  {
+    id: '2',
+    trainerId: '1',
+    name: 'Botella de Proteína Premium',
+    description: 'Proteína whey de alta calidad, sabor chocolate (1kg)',
+    cost: 300,
+    type: 'physical',
+    category: 'nutrition',
+    icon: '🥤',
+    color: 'brown',
+    isActive: true,
+    stock: 10,
+    createdAt: new Date('2024-01-01')
+  },
+  {
+    id: '3',
+    trainerId: '1',
+    name: 'Camiseta FitPro',
+    description: 'Camiseta oficial de entrenamiento FitPro, material transpirable',
+    cost: 200,
+    type: 'physical',
+    category: 'gear',
+    icon: '👕',
+    color: 'blue',
+    isActive: true,
+    stock: 15,
+    createdAt: new Date('2024-01-01')
+  },
+  {
+    id: '4',
+    trainerId: '1',
+    name: 'Día Libre de Entrenamiento',
+    description: 'Un día libre sin penalizaciones en tu plan de entrenamiento',
+    cost: 150,
+    type: 'privilege',
+    category: 'training',
+    icon: '🏖️',
+    color: 'yellow',
+    isActive: true,
+    createdAt: new Date('2024-01-01')
+  },
+  {
+    id: '5',
+    trainerId: '1',
+    name: 'Plan Nutricional Personalizado',
+    description: 'Plan de alimentación personalizado por 1 mes',
+    cost: 400,
+    type: 'digital',
+    category: 'nutrition',
+    icon: '📋',
+    color: 'green',
+    isActive: true,
+    restrictions: {
+      minLevel: 5
+    },
+    createdAt: new Date('2024-01-01')
+  }
+];
+
+export const mockRewardClaims: RewardClaim[] = [
+  {
+    id: '1',
+    clientId: '2',
+    rewardId: '3',
+    pointsSpent: 200,
+    status: 'delivered',
+    claimedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+    deliveredAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    notes: 'Entregada en el gimnasio'
+  }
+];
+
+export const mockLeaderboard: Leaderboard[] = [
+  {
+    id: '1',
+    type: 'weekly',
+    period: '2024-W12',
+    rankings: [
+      {
+        clientId: '2',
+        clientName: 'Ana García',
+        clientAvatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=2',
+        points: 275,
+        rank: 1,
+        change: 0,
+        badges: ['🔥', '💪']
+      },
+      {
+        clientId: '3',
+        clientName: 'Miguel Rodríguez',
+        clientAvatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=2',
+        points: 180,
+        rank: 2,
+        change: 1,
+        badges: ['🎯']
+      }
+    ],
+    lastUpdated: new Date()
   }
 ];
 

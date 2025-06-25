@@ -130,7 +130,7 @@ export interface Appointment {
 export interface Notification {
   id: string;
   userId: string;
-  type: 'message' | 'appointment' | 'workout' | 'progress' | 'system';
+  type: 'message' | 'appointment' | 'workout' | 'progress' | 'system' | 'mission';
   title: string;
   message: string;
   timestamp: Date;
@@ -193,4 +193,126 @@ export interface DailyActivity {
   }[];
   source: string;
   syncedAt: Date;
+}
+
+// Nuevos tipos para el sistema de incentivos y misiones
+export interface Mission {
+  id: string;
+  trainerId: string;
+  clientId: string;
+  title: string;
+  description: string;
+  type: 'workout' | 'steps' | 'calories' | 'weight' | 'consistency' | 'custom';
+  difficulty: 'easy' | 'medium' | 'hard' | 'extreme';
+  points: number;
+  target: {
+    value: number;
+    unit: string;
+    timeframe: 'daily' | 'weekly' | 'monthly' | 'total';
+  };
+  status: 'active' | 'completed' | 'expired' | 'paused';
+  progress: number; // 0-100
+  startDate: Date;
+  endDate: Date;
+  completedAt?: Date;
+  category: 'fitness' | 'nutrition' | 'lifestyle' | 'challenge';
+  icon: string;
+  color: string;
+  requirements?: {
+    workoutType?: string;
+    exerciseId?: string;
+    minDuration?: number;
+    specificDays?: string[];
+  };
+  createdAt: Date;
+}
+
+export interface ClientPoints {
+  id: string;
+  clientId: string;
+  totalPoints: number;
+  currentLevel: number;
+  pointsToNextLevel: number;
+  weeklyPoints: number;
+  monthlyPoints: number;
+  streak: {
+    current: number;
+    longest: number;
+    lastActivity: Date;
+  };
+  achievements: Achievement[];
+  lastUpdated: Date;
+}
+
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  points: number;
+  unlockedAt: Date;
+  category: 'missions' | 'consistency' | 'milestones' | 'special';
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+}
+
+export interface PointsTransaction {
+  id: string;
+  clientId: string;
+  type: 'earned' | 'bonus' | 'penalty' | 'reward';
+  points: number;
+  reason: string;
+  relatedId?: string; // ID de misión, workout, etc.
+  relatedType?: 'mission' | 'workout' | 'achievement' | 'bonus';
+  timestamp: Date;
+  description: string;
+}
+
+export interface Reward {
+  id: string;
+  trainerId: string;
+  name: string;
+  description: string;
+  cost: number; // puntos necesarios
+  type: 'physical' | 'digital' | 'experience' | 'privilege';
+  category: 'gear' | 'nutrition' | 'training' | 'lifestyle';
+  icon: string;
+  color: string;
+  isActive: boolean;
+  stock?: number;
+  restrictions?: {
+    minLevel?: number;
+    requiredAchievements?: string[];
+    timeLimit?: Date;
+  };
+  createdAt: Date;
+}
+
+export interface RewardClaim {
+  id: string;
+  clientId: string;
+  rewardId: string;
+  pointsSpent: number;
+  status: 'pending' | 'approved' | 'delivered' | 'cancelled';
+  claimedAt: Date;
+  deliveredAt?: Date;
+  notes?: string;
+}
+
+export interface Leaderboard {
+  id: string;
+  type: 'weekly' | 'monthly' | 'alltime';
+  period: string; // "2024-03" para monthly, "2024-W12" para weekly
+  rankings: LeaderboardEntry[];
+  lastUpdated: Date;
+}
+
+export interface LeaderboardEntry {
+  clientId: string;
+  clientName: string;
+  clientAvatar?: string;
+  points: number;
+  rank: number;
+  change: number; // cambio desde la última actualización
+  badges: string[]; // logros destacados
 }
