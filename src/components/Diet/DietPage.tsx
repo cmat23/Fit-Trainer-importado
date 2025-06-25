@@ -21,11 +21,14 @@ import {
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { AssignDietModal } from './AssignDietModal';
+import { EditDietModal } from './EditDietModal';
 
 export function DietPage() {
   const { user } = useAuth();
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDietPlan, setSelectedDietPlan] = useState<any>(null);
 
   // Filtrar planes de dieta según el rol del usuario
   const userDietPlans = user?.role === 'trainer' 
@@ -42,8 +45,15 @@ export function DietPage() {
     alert('Plan nutricional asignado exitosamente (funcionalidad de demostración)');
   };
 
-  const handleEditDiet = (planId: string) => {
-    alert(`Editar plan ${planId} (funcionalidad de demostración)`);
+  const handleEditDiet = (plan: any) => {
+    setSelectedDietPlan(plan);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEditedDiet = (dietData: any) => {
+    console.log('Saving edited diet:', dietData);
+    alert('Plan nutricional actualizado exitosamente (funcionalidad de demostración)');
+    setSelectedDietPlan(null);
   };
 
   const handleDeleteDiet = (planId: string) => {
@@ -410,7 +420,7 @@ export function DietPage() {
                           {/* Acciones */}
                           <div className="flex items-center space-x-2 ml-4">
                             <button
-                              onClick={() => handleEditDiet(plan.id)}
+                              onClick={() => handleEditDiet(plan)}
                               className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-full transition-colors"
                               title="Editar plan"
                             >
@@ -456,6 +466,16 @@ export function DietPage() {
         onSave={handleAssignDiet}
         clientId=""
         clientName=""
+      />
+
+      <EditDietModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedDietPlan(null);
+        }}
+        onSave={handleSaveEditedDiet}
+        dietPlan={selectedDietPlan}
       />
     </div>
   );
