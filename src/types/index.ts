@@ -133,3 +133,58 @@ export interface Notification {
   priority: 'low' | 'medium' | 'high';
   relatedId?: string;
 }
+
+// Nuevos tipos para integración con smartwatches
+export interface FitnessData {
+  id: string;
+  clientId: string;
+  date: Date;
+  source: 'apple_health' | 'google_fit' | 'fitbit' | 'garmin' | 'samsung_health' | 'manual';
+  dataType: 'steps' | 'calories' | 'heart_rate' | 'sleep' | 'workout' | 'distance' | 'active_minutes';
+  value: number;
+  unit: string;
+  metadata?: {
+    workoutType?: string;
+    duration?: number;
+    averageHeartRate?: number;
+    maxHeartRate?: number;
+    sleepStages?: {
+      deep: number;
+      light: number;
+      rem: number;
+      awake: number;
+    };
+  };
+  syncedAt: Date;
+}
+
+export interface DeviceConnection {
+  id: string;
+  clientId: string;
+  deviceType: 'apple_watch' | 'fitbit' | 'garmin' | 'samsung_watch' | 'google_fit' | 'other';
+  deviceName: string;
+  isConnected: boolean;
+  lastSync: Date;
+  permissions: string[];
+  createdAt: Date;
+}
+
+export interface DailyActivity {
+  id: string;
+  clientId: string;
+  date: Date;
+  steps: number;
+  caloriesBurned: number;
+  activeMinutes: number;
+  distance: number; // en km
+  averageHeartRate?: number;
+  sleepHours?: number;
+  workouts: {
+    type: string;
+    duration: number;
+    calories: number;
+    startTime: Date;
+  }[];
+  source: string;
+  syncedAt: Date;
+}

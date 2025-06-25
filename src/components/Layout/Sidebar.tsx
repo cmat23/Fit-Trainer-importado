@@ -10,7 +10,8 @@ import {
   TrendingUp,
   Dumbbell,
   User,
-  BarChart3
+  BarChart3,
+  Smartphone
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
@@ -28,6 +29,7 @@ const clientNavItems = [
   { to: '/dashboard', icon: BarChart3, label: 'Dashboard' },
   { to: '/progress', icon: TrendingUp, label: 'Mi Progreso' },
   { to: '/workouts', icon: Dumbbell, label: 'Mis Rutinas' },
+  { to: '/fitness-sync', icon: Smartphone, label: 'Dispositivos' },
   { to: '/diet', icon: Apple, label: 'Mi Dieta' },
   { to: '/calendar', icon: Calendar, label: 'Calendario' },
   { to: '/messages', icon: MessageSquare, label: 'Mensajes' },

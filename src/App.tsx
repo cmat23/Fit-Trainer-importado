@@ -11,6 +11,8 @@ import { WorkoutsPage } from './components/Workouts/WorkoutsPage';
 import { ProgressPage } from './components/Progress/ProgressPage';
 import { MessagesPage } from './components/Messages/MessagesPage';
 import { CalendarPage } from './components/Calendar/CalendarPage';
+import { SmartwatchSync } from './components/Fitness/SmartwatchSync';
+import { FitnessDataImport } from './components/Fitness/FitnessDataImport';
 import { Layout } from './components/Layout/Layout';
 
 function AppRoutes() {
@@ -41,6 +43,8 @@ function AppRoutes() {
           {user.role === 'client' && (
             <>
               <Route path="/progress" element={<ProgressPage />} />
+              <Route path="/fitness-sync" element={<SmartwatchSync />} />
+              <Route path="/fitness-import" element={<FitnessDataImport />} />
             </>
           )}
           

@@ -1,4 +1,4 @@
-import { User, Client, ProgressEntry, Exercise, Workout, DietPlan, Message, Appointment, Notification } from '../types';
+import { User, Client, ProgressEntry, Exercise, Workout, DietPlan, Message, Appointment, Notification, FitnessData, DeviceConnection, DailyActivity } from '../types';
 
 export const mockUsers: User[] = [
   {
@@ -340,6 +340,97 @@ export const mockNotifications: Notification[] = [
     actionUrl: '/clients/2',
     priority: 'low',
     relatedId: '2'
+  }
+];
+
+// Nuevos datos mock para fitness y dispositivos
+export const mockFitnessData: FitnessData[] = [
+  {
+    id: '1',
+    clientId: '2',
+    date: new Date(),
+    source: 'apple_health',
+    dataType: 'steps',
+    value: 8547,
+    unit: 'steps',
+    syncedAt: new Date()
+  },
+  {
+    id: '2',
+    clientId: '2',
+    date: new Date(),
+    source: 'apple_health',
+    dataType: 'calories',
+    value: 2340,
+    unit: 'kcal',
+    syncedAt: new Date()
+  },
+  {
+    id: '3',
+    clientId: '2',
+    date: new Date(),
+    source: 'apple_health',
+    dataType: 'heart_rate',
+    value: 72,
+    unit: 'bpm',
+    metadata: {
+      averageHeartRate: 72,
+      maxHeartRate: 145
+    },
+    syncedAt: new Date()
+  }
+];
+
+export const mockDeviceConnections: DeviceConnection[] = [
+  {
+    id: '1',
+    clientId: '2',
+    deviceType: 'apple_watch',
+    deviceName: 'Apple Watch Series 8',
+    isConnected: true,
+    lastSync: new Date(Date.now() - 30 * 60 * 1000),
+    permissions: ['steps', 'heart_rate', 'workouts', 'sleep'],
+    createdAt: new Date('2024-01-15')
+  },
+  {
+    id: '2',
+    clientId: '3',
+    deviceType: 'fitbit',
+    deviceName: 'Fitbit Versa 4',
+    isConnected: true,
+    lastSync: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    permissions: ['steps', 'calories', 'heart_rate', 'sleep'],
+    createdAt: new Date('2024-02-01')
+  }
+];
+
+export const mockDailyActivity: DailyActivity[] = [
+  {
+    id: '1',
+    clientId: '2',
+    date: new Date(),
+    steps: 8547,
+    caloriesBurned: 2340,
+    activeMinutes: 67,
+    distance: 6.2,
+    averageHeartRate: 72,
+    sleepHours: 7.5,
+    workouts: [
+      {
+        type: 'Correr',
+        duration: 35,
+        calories: 320,
+        startTime: new Date(Date.now() - 4 * 60 * 60 * 1000)
+      },
+      {
+        type: 'Entrenamiento de fuerza',
+        duration: 45,
+        calories: 180,
+        startTime: new Date(Date.now() - 8 * 60 * 60 * 1000)
+      }
+    ],
+    source: 'Apple Health',
+    syncedAt: new Date()
   }
 ];
 
