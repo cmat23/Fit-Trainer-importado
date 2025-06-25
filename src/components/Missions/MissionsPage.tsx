@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { mockMissions, mockClientPoints, mockPointsTransactions, mockRewards, mockLeaderboard } from '../../data/mockData';
+import { mockMissions, mockClientPoints, mockPointsTransactions, mockRewards, mockLeaderboard, mockClients } from '../../data/mockData';
 import { 
   Target, 
   Plus, 
@@ -18,20 +18,26 @@ import {
   TrendingUp,
   Award,
   Zap,
-  Users
+  Users,
+  History,
+  BarChart3,
+  User
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { CreateMissionModal } from './CreateMissionModal';
 import { RewardsModal } from './RewardsModal';
 import { LeaderboardModal } from './LeaderboardModal';
+import { MissionResultsModal } from './MissionResultsModal';
 
 export function MissionsPage() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'missions' | 'rewards' | 'leaderboard'>('missions');
+  const [activeTab, setActiveTab] = useState<'missions' | 'rewards' | 'leaderboard' | 'results'>('missions');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isRewardsModalOpen, setIsRewardsModalOpen] = useState(false);
   const [isLeaderboardModalOpen, setIsLeaderboardModalOpen] = useState(false);
+  const [isResultsModalOpen, setIsResultsModalOpen] = useState(false);
+  const [selectedClientForResults, setSelectedClientForResults] = useState<{id: string, name: string} | null>(null);
 
   // Filtrar datos según el rol del usuario
   const userMissions = user?.role === 'trainer' 
@@ -49,6 +55,11 @@ export function MissionsPage() {
   const availableRewards = mockRewards.filter(r => r.isActive);
   const weeklyLeaderboard = mockLeaderboard.find(l => l.type === 'weekly');
 
+  // Para entrenadores: obtener clientes
+  const trainerClients = user?.role === 'trainer' 
+    ? mockClients.filter(client => client.trainerId === user.id)
+    : [];
+
   const handleCreateMission = (missionData: any) => {
     console.log('Creating mission:', missionData);
     alert('Misión creada exitosamente (funcionalidad de demostración)');
@@ -62,6 +73,16 @@ export function MissionsPage() {
   const handleClaimReward = (rewardId: string) => {
     console.log('Claiming reward:', rewardId);
     alert('Recompensa reclamada exitosamente (funcionalidad de demostración)');
+  };
+
+  const handleViewClientResults = (clientId: string, clientName: string) => {
+    setSelectedClientForResults({ id: clientId, name: clientName });
+    setIsResultsModalOpen(true);
+  };
+
+  const handleViewAllResults = () => {
+    setSelectedClientForResults(null);
+    setIsResultsModalOpen(true);
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -113,15 +134,26 @@ export function MissionsPage() {
             }
           </p>
         </div>
-        {user?.role === 'trainer' && (
-          <button 
-            onClick={() => setIsCreateModalOpen(true)}
-            className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Nueva Misión
-          </button>
-        )}
+        <div className="flex items-center space-x-3 mt-4 sm:mt-0">
+          {user?.role === 'trainer' && (
+            <>
+              <button 
+                onClick={handleViewAllResults}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200"
+              >
+                <History className="w-4 h-4 mr-2" />
+                Ver Historial
+              </button>
+              <button 
+                onClick={() => setIsCreateModalOpen(true)}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Nueva Misión
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Stats para clientes */}
@@ -168,6 +200,66 @@ export function MissionsPage() {
               </div>
               <TrendingUp className="w-8 h-8 text-green-200" />
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Resumen para entrenadores */}
+      {user?.role === 'trainer' && (
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Resumen de Clientes</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {trainerClients.map((client) => {
+              const clientMissions = mockMissions.filter(m => m.clientId === client.id);
+              const clientPoints = mockClientPoints.find(cp => cp.clientId === client.id);
+              const activeMissions = clientMissions.filter(m => m.status === 'active').length;
+              const completedMissions = clientMissions.filter(m => m.status === 'completed').length;
+              
+              return (
+                <div key={client.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div className="flex items-center space-x-3 mb-3">
+                    {client.avatar ? (
+                      <img 
+                        src={client.avatar} 
+                        alt={client.name}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                        <User className="w-5 h-5 text-gray-600" />
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="font-medium text-gray-900">{client.name}</h3>
+                      <p className="text-sm text-gray-500">Nivel {clientPoints?.currentLevel || 1}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-3 text-center mb-3">
+                    <div>
+                      <p className="text-lg font-bold text-blue-600">{activeMissions}</p>
+                      <p className="text-xs text-gray-600">Activas</p>
+                    </div>
+                    <div>
+                      <p className="text-lg font-bold text-green-600">{completedMissions}</p>
+                      <p className="text-xs text-gray-600">Completadas</p>
+                    </div>
+                    <div>
+                      <p className="text-lg font-bold text-purple-600">{clientPoints?.totalPoints || 0}</p>
+                      <p className="text-xs text-gray-600">Puntos</p>
+                    </div>
+                  </div>
+                  
+                  <button
+                    onClick={() => handleViewClientResults(client.id, client.name)}
+                    className="w-full px-3 py-2 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors flex items-center justify-center space-x-2"
+                  >
+                    <BarChart3 className="w-4 h-4" />
+                    <span>Ver Historial</span>
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -605,6 +697,13 @@ export function MissionsPage() {
         onClose={() => setIsLeaderboardModalOpen(false)}
         leaderboard={weeklyLeaderboard}
         currentUserId={user?.id}
+      />
+
+      <MissionResultsModal
+        isOpen={isResultsModalOpen}
+        onClose={() => setIsResultsModalOpen(false)}
+        clientId={selectedClientForResults?.id}
+        clientName={selectedClientForResults?.name}
       />
     </div>
   );
