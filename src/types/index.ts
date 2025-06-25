@@ -81,22 +81,28 @@ export interface Meal {
   carbs: number;
   fat: number;
   description?: string;
+  time?: string;
 }
 
 export interface DietPlan {
   id: string;
   clientId: string;
+  trainerId: string;
   name: string;
   startDate: Date;
   endDate?: Date;
+  targetCalories: number;
+  targetProtein: number;
+  targetCarbs: number;
+  targetFat: number;
   meals: {
     breakfast: Meal[];
     lunch: Meal[];
     dinner: Meal[];
     snacks: Meal[];
   };
-  totalCalories: number;
   notes?: string;
+  createdAt: Date;
 }
 
 export interface Message {

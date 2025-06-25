@@ -24,18 +24,21 @@ import {
   Moon,
   Wifi,
   WifiOff,
-  RefreshCw
+  RefreshCw,
+  Apple
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { generateClientReport } from '../../utils/pdfExport';
 import { AddProgressModal } from '../Progress/AddProgressModal';
+import { AssignDietModal } from '../Diet/AssignDietModal';
 
 export function ClientDetailPage() {
   const { clientId } = useParams();
   const [activeTab, setActiveTab] = useState<'overview' | 'progress' | 'workouts' | 'diet' | 'fitness'>('overview');
   const [isAddProgressModalOpen, setIsAddProgressModalOpen] = useState(false);
+  const [isAssignDietModalOpen, setIsAssignDietModalOpen] = useState(false);
   
   const client = mockClients.find(c => c.id === clientId);
   const clientProgress = mockProgressEntries.filter(entry => entry.clientId === clientId);
@@ -80,7 +83,7 @@ export function ClientDetailPage() {
     { id: 'progress', label: 'Progreso', icon: TrendingUp },
     { id: 'workouts', label: 'Entrenamientos', icon: Dumbbell },
     { id: 'fitness', label: 'Datos Fitness', icon: Smartphone },
-    { id: 'diet', label: 'Dieta', icon: Activity },
+    { id: 'diet', label: 'Dieta', icon: Apple },
   ];
 
   const handleExportPDF = () => {
@@ -110,6 +113,11 @@ export function ClientDetailPage() {
 
   const handleSyncDevice = (deviceId: string) => {
     alert(`Sincronizando dispositivo ${deviceId} (funcionalidad de demostración)`);
+  };
+
+  const handleAssignDiet = (dietData: any) => {
+    console.log('Assigning diet to client:', client.id, dietData);
+    alert('Plan nutricional asignado exitosamente (funcionalidad de demostración)');
   };
 
   const getDeviceIcon = (deviceType: string) => {
@@ -592,7 +600,7 @@ export function ClientDetailPage() {
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900">Plan Nutricional</h3>
                 <button 
-                  onClick={() => alert('Asignar dieta (funcionalidad de demostración)')}
+                  onClick={() => setIsAssignDietModalOpen(true)}
                   className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center space-x-2"
                 >
                   <Plus className="w-4 h-4" />
@@ -601,7 +609,7 @@ export function ClientDetailPage() {
               </div>
               
               <div className="text-center py-12">
-                <Activity className="mx-auto h-12 w-12 text-gray-400" />
+                <Apple className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">No hay plan nutricional asignado</h3>
                 <p className="mt-1 text-sm text-gray-500">
                   Crea un plan personalizado para este cliente
@@ -616,6 +624,14 @@ export function ClientDetailPage() {
         isOpen={isAddProgressModalOpen}
         onClose={() => setIsAddProgressModalOpen(false)}
         onSave={handleAddProgress}
+      />
+
+      <AssignDietModal
+        isOpen={isAssignDietModalOpen}
+        onClose={() => setIsAssignDietModalOpen(false)}
+        onSave={handleAssignDiet}
+        clientId={client.id}
+        clientName={client.name}
       />
     </div>
   );
